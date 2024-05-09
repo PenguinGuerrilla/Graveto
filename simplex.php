@@ -12,7 +12,7 @@ function printMat($mat){
     $col = count($mat[0]);
     for ($i = 0; $i < $lin; $i++) {
         for ($j = 0; $j < $col; $j++) {
-          echo $mat[$i][$j]."  ";
+          echo round($mat[$i][$j],2)." ";
         }
       echo "</br>";
     }
@@ -24,10 +24,17 @@ function escalona($mat,$pivot){
   }
   printMat($mat);
   echo '</br>';
+  
   for($i = 0; $i < count($mat); $i++){
+    $mult = $mat[$i][$pivot[1]];
     if($i != $pivot[0]){
       for($j = 0; $j < count($mat[0]); $j++){
-        $mat[$i][$j] = $mat[$i][$j] - ($mat[$i][$j] * $mat[$pivot[0]][$pivot[$j]]);
+        if($mat[$i][$j]!= 0){
+          
+        }
+        $temp = $mat[$i][$j] -= $mult * $mat[$pivot[0]][$j];
+        echo $mat[$i][$j]." -= (".$mult." * ".$mat[$pivot[0]][$j].") = ".$temp." </br>";
+
       }
     }
   }
@@ -42,7 +49,7 @@ function findPivot($mat){
   $pivotRow = 0;
 
   for($j = 0; $j < $col; $j++){
-    if(abs($mat[0][$j]) > $maxCol){
+    if($mat[0][$j] > $maxCol){
       $maxCol = $mat[0][$j];
       $pivotCol = $j;
     }
@@ -51,7 +58,7 @@ function findPivot($mat){
 
   for($i = 1; $i < $lin; $i++){
     if($mat[$i][$pivotCol] != 0){
-      echo "[".$i."][".($col-1)."] / [".$i."][".$pivotCol."] = ".$mat[$i][$col-1]/$mat[$i][$pivotCol]." </br>";
+      echo $mat[$i][($col-1)]." [".$i."][".($col-1)."] / ".$mat[$i][$pivotCol]." [".$i."][".$pivotCol."] = ".$mat[$i][$col-1]/$mat[$i][$pivotCol]." </br>";
       if(($mat[$i][$col-1]/$mat[$i][$pivotCol]) < $maxRow){
         $maxRow = ($mat[$i][$col-1]/$mat[$i][$pivotCol]);
 
@@ -71,4 +78,7 @@ printMat($matriz);
 $piv = findPivot($matriz);
 $m = escalona($matriz,$piv);
 printMat($m); 
+$piv2= findPivot($m);
+$m2 = escalona($m,$piv2);
+printMat($m2);
 
