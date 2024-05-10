@@ -6,8 +6,19 @@ $matriz = array(
     array(0,2,0,1,0,12),
     array(3,2,0,0,1,18)
 );
+function checkOptimality($mat){
+  for($j = 0; $j < count($mat[0]); $j++){
+    if($mat[0][$j] > 0){
+      echo "</br>Solução não ótima</br>";
+      return false;
+    }
+  }
+  echo "</br>Solução ótima</br>";
 
+  return true;
+}
 function printMat($mat){
+    echo "<br/>";
     $lin = count($mat);
     $col = count($mat[0]);
     for ($i = 0; $i < $lin; $i++) {
@@ -16,6 +27,7 @@ function printMat($mat){
         }
       echo "</br>";
     }
+    echo "</br>";
 }
 function escalona($mat,$pivot){
   $div = $mat[$pivot[0]][$pivot[1]];
@@ -74,11 +86,17 @@ function findPivot($mat){
   $pivot = array($pivotRow,$pivotCol);
   return $pivot;
 }
-printMat($matriz);
-$piv = findPivot($matriz);
-$m = escalona($matriz,$piv);
-printMat($m); 
-$piv2= findPivot($m);
-$m2 = escalona($m,$piv2);
-printMat($m2);
+function maximizeSimplex($mat){
+  $it = 0;
+  do{
+    echo "Iteração: ".$it."</br>";
+    printMat($mat);
+    $piv = findPivot($mat);
+    $mat = escalona($mat, $piv);
+    printMat($mat);
+    $it++;
+  }while(!checkOptimality($mat));
+}
+maximizeSimplex($matriz);
+
 
