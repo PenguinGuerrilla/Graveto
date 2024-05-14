@@ -1,10 +1,39 @@
 <?php
 $matriz = array(
-    array(24,22,45,0,0,0,0),
-    array(2,1,3.9,1,0,0,42),
-    array(2,1,2,0,1,0,40),
-    array(1,0.5,1,0,0,1,45)
+    array(3,5,0,0,0,0),
+    array(1,0,0,0,0,4),
+    array(0,2,0,0,0,12),
+    array(3,2,0,0,0,18)
 );
+$n=3; //numero de restrioções
+$m=3; //numero de variáveis
+
+function mkIdentidade($n,$m){
+  $identidade = [];
+  for($i = 0;$i<$n;$i++){
+    for($j = 0;$j<$m;$j++){
+      if($i == $j){
+        $identidade[$i][$j] = 1;
+      }
+      else{
+        $identidade[$i][$j] = 0;
+      }
+    }
+  }
+  return $identidade;
+}
+mkIdentidade($m,$m);
+function addFolga($mat,$n,$m){
+  $identidade = mkIdentidade($n,$m);
+  printMat($identidade);
+  for($i = 1; $i < count($mat); $i++){
+    for($j = $m-1; $j < count($mat[0])-1; $j++){
+      echo $i." ".$j."</br>";
+      $mat[$i][$j] = $identidade[$i-1][$j-$n];
+    }
+  }
+  printMat($mat);
+}
 function checkOptimality($mat){ //teste de otimalidade
   for($j = 0; $j < count($mat[0]); $j++){
     if($mat[0][$j] > 0){
@@ -91,6 +120,17 @@ function maximizeSimplex($mat){ //realiza maximização pelo método simplex tab
     $it++;
   }while(!checkOptimality($mat)); //realiza outra iteração enquanto não encontrar uma solução ótima
 }
-maximizeSimplex($matriz);
+
+function minimizeSimplex($mat){//realiza maximização pelo método simplex tabular (min Z = -max(-Z))
+  for($j = 0; $j < count($mat[0]); $j++){
+    $mat[0][$j] *= -1;
+  }
+  maximizeSimplex($mat);
+}
+addFolga($matriz,$m,$n);
+// echo "</br>-- MAXIMIZAÇÃO --</br></br>";
+// maximizeSimplex($matriz);
+// echo "</br>-- MINIMIZAÇÃO --</br></br>";
+// minimizeSimplex($matriz);
 
 
