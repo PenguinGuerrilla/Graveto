@@ -1,17 +1,52 @@
 <?php
-$matriz = array(
-    array(3,5,0,0,0,0),
-    array(1,0,0,0,0,4),
-    array(0,2,0,0,0,12),
-    array(3,2,0,0,0,18)
-);
-$n=3; //numero de restrioções
-$m=3; //numero de variáveis
 
-function mkIdentidade($n,$m){
+/*$matriz = array(
+    array(3,5,0,0,0,0),
+    array(1,0,1,0,0,4),
+    array(0,2,0,1,0,12),
+    array(3,2,0,0,1,18)
+);*/
+
+global $n; //numero de restrioções
+$n = $_POST["rest"];
+global $m; //numero de variáveis
+$m = $_POST["var"];
+echo $n." ".$m."<br/>";
+
+function mkMatriz($n,$m){
+  $id = mkIdentidade($n); //matriz identidade
+  $z = array();//função objetivo
+  $matOut = array(array());//matriz de output
+  for($j=0;$j<($n+$m+1);$j++){
+    if($j<$m){
+      $z[$j] = $_POST["z".$j];
+    }
+    else{
+      $z[$j] = 0;
+    } 
+    array_push($matOut[0],$z[$j]);
+  }
+  printMat($matOut);
+  for($i = 0; $i<$n; $i++){
+    echo "i: ".$i."<br/>";
+    for($j = 0; $j<$m; $j++){
+      $matOut[($i+1)][$j] = $_POST["v".$i.$j];
+    }
+    for($j=$m; $j<($n+$m);$j++){
+      echo "j: ".$j."<br/>";
+      echo "Matriz ".($i+1)." ".$j." = id ".$i." ".($j-$m)."<br/>";
+      $matOut[($i+1)][$j] = $id[$i][$j-$m];
+    }
+    array_push($matOut[$i+1],$_POST["r".$i]);   
+  }
+  printMat($matOut);
+  return($matOut);
+}
+
+function mkIdentidade($n){
   $identidade = [];
   for($i = 0;$i<$n;$i++){
-    for($j = 0;$j<$m;$j++){
+    for($j = 0;$j<$n;$j++){
       if($i == $j){
         $identidade[$i][$j] = 1;
       }
@@ -20,11 +55,11 @@ function mkIdentidade($n,$m){
       }
     }
   }
+  printMat($identidade);
   return $identidade;
 }
-mkIdentidade($m,$m);
 function addFolga($mat,$n,$m){
-  $identidade = mkIdentidade($n,$m);
+  $identidade = mkIdentidade($n);
   printMat($identidade);
   for($i = 1; $i < count($mat); $i++){
     for($j = $m-1; $j < count($mat[0])-1; $j++){
@@ -51,7 +86,7 @@ function printMat($mat){ //imprime a matriz
     $col = count($mat[0]);
     for ($i = 0; $i < $lin; $i++) {
         for ($j = 0; $j < $col; $j++) {
-          echo round($mat[$i][$j],2)." ";
+          echo "| ".round($mat[$i][$j],2)." | ";
         }
       echo "</br>";
     }
@@ -84,7 +119,7 @@ function findPivot($mat){
   $maxRow = PHP_INT_MAX;
   $pivotRow = 0;
 
-  for($j = 0; $j < $col; $j++){//encontra a coluna pivo
+  for($j = 0; $j < $col-1; $j++){//encontra a coluna pivo
     if($mat[0][$j] > $maxCol){
       $maxCol = $mat[0][$j];
       $pivotCol = $j;
@@ -95,7 +130,7 @@ function findPivot($mat){
   for($i = 1; $i < $lin; $i++){//encontra a linha pivo
     if($mat[$i][$pivotCol] != 0){
       echo round($mat[$i][($col-1)],2)." [".$i."][".($col-1)."] / ".round($mat[$i][$pivotCol],2)." [".$i."][".$pivotCol."] = ".round($mat[$i][$col-1],2)/round($mat[$i][$pivotCol],2)." </br>";
-      if(($mat[$i][$col-1]/$mat[$i][$pivotCol]) < $maxRow){//teste da razão mínima
+      if(($mat[$i][$col-1]/$mat[$i][$pivotCol]) < $maxRow  && ($mat[$i][$col-1]/$mat[$i][$pivotCol])  >= 0){//teste da razão mínima
         $maxRow = ($mat[$i][$col-1]/$mat[$i][$pivotCol]);
         $pivotRow = $i;
       }
@@ -127,10 +162,9 @@ function minimizeSimplex($mat){//realiza maximização pelo método simplex tabu
   }
   maximizeSimplex($mat);
 }
-addFolga($matriz,$m,$n);
-// echo "</br>-- MAXIMIZAÇÃO --</br></br>";
-// maximizeSimplex($matriz);
-// echo "</br>-- MINIMIZAÇÃO --</br></br>";
-// minimizeSimplex($matriz);
-
+$matriz = mkMatriz($n,$m);
+echo "</br>-- MAXIMIZAÇÃO --</br></br>";
+maximizeSimplex($matriz);
+/*echo "</br>-- MINIMIZAÇÃO --</br></br>";
+minimizeSimplex($matriz);*/
 
