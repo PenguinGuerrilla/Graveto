@@ -60,10 +60,10 @@ function mkIdentidade($n){
 }
 function addFolga($mat,$n,$m){
   $identidade = mkIdentidade($n);
-  printMat($identidade);
+  // printMat($identidade);
   for($i = 1; $i < count($mat); $i++){
     for($j = $m-1; $j < count($mat[0])-1; $j++){
-      echo $i." ".$j."</br>";
+      // echo $i." ".$j."</br>";
       $mat[$i][$j] = $identidade[$i-1][$j-$n];
     }
   }
